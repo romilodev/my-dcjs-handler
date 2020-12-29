@@ -48,7 +48,7 @@ handler.getCommand(name: string)
 {
   name: "The name of the command (defined by the file name)",
   description?: "The description of the command (defined in the command module.exports)",
-  aliases?: ["alias1", { "name": "alias2", required?: true }] // (defined in the command module.exports)
+  aliases?: ["Other ways to execute the command", "(defined in the command module.exports)"] // (defined in the command module.exports)
   run: Function(client, message, args)
 }
 
