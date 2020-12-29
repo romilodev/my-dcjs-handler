@@ -36,7 +36,7 @@ module.exports = {
   descriptions: 'Shows bot information', // Not used (Opcional)
   aliases: ['bot'], // Not used (Opcional)
 
-  run: (client, message, args) => {
+  run: (client, message, args, handler) => {
     // ...
   }
 }

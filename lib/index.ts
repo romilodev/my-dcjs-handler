@@ -30,10 +30,6 @@ export interface HandlerOptions {
   commandsPath: string
 }
 
-export interface CommandFileRun {
-  (client: Client, message: Message, args: string[]): any | Promise<any>
-}
-
 export interface Command {
   name: string
   aliases?: string[]
@@ -45,6 +41,14 @@ export interface Command {
         required?: boolean
       }[]
   run(client: Client, message: Message, args: string[]): void
+}
+
+interface Handler {
+  commands: Map<string, Command>
+}
+
+export interface CommandFileRun {
+  (client: Client, message: Message, args: string[], handler: Handler): any
 }
 
 export interface CommandFile {
@@ -61,7 +65,6 @@ export interface CommandFile {
 
 class Handler {
   private options: HandlerOptions
-  commands: Map<string, Command>
   private aliases: Map<string, string>
 
   constructor(options: HandlerOptions) {
@@ -136,7 +139,7 @@ class Handler {
         args: commandFile.args,
         run: (client, message, args) => {
           try {
-            commandFile.run(client, message, args)
+            commandFile.run(client, message, args, this)
           } catch (e) {
             console.warn(e)
 
