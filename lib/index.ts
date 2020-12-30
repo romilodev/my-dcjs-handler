@@ -34,12 +34,13 @@ export interface Command {
   name: string
   aliases?: string[]
   description?: string
-  args?:
-    | string[]
+  args?: (
+    | string
     | {
         name: string
         required?: boolean
-      }[]
+      }
+  )[]
   run(client: Client, message: Message, args: string[]): void
 }
 
@@ -54,12 +55,13 @@ export interface CommandFileRun {
 export interface CommandFile {
   aliases?: string[]
   description?: string
-  args?:
-    | string[]
+  args?: (
+    | string
     | {
         name: string
         required?: boolean
-      }[]
+      }
+  )[]
   run: CommandFileRun
 }
 
