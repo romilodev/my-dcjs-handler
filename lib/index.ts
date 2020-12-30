@@ -5,6 +5,7 @@ import {
   MessageEmbed,
   MessageOptions
 } from 'discord.js'
+import Collection from '@discordjs/collection'
 import * as path from 'path'
 import { existsSync, lstatSync, readdirSync } from 'fs'
 
@@ -45,7 +46,7 @@ export interface Command {
 }
 
 interface Handler {
-  commands: Map<string, Command>
+  commands: Collection<string, Command>
 }
 
 export interface CommandFileRun {
@@ -72,13 +73,13 @@ class Handler {
   constructor(options: HandlerOptions) {
     this.options = options
 
-    this.commands = new Map()
+    this.commands = new Collection()
     this.aliases = new Map()
 
     this.init()
   }
 
-  public get prefix(): string {
+  public get prefix() {
     return this.options.prefix
   }
 
@@ -122,7 +123,7 @@ class Handler {
   private init() {
     const { errorMessage, commandsPath: dir } = this.options
 
-    if (!existsSync(dir)) return new Map()
+    if (!existsSync(dir)) return
 
     const files = readdirSync(path.resolve(dir)).filter(
       file =>

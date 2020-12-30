@@ -8,6 +8,10 @@ or
 ```sh
 yarn add my-dcjs-handler
 ```
+
+## Collections
+The library uses the Collection class from Discord.js. For more information, check the [Discord.js Documentation](https://discord.js.org/#/docs/collection/master/class/Collection).
+
 ## Use
 
 ### Main file
@@ -58,7 +62,7 @@ handler.runCommand(client, message): void
 
 handler.prefix // The bot prefix
 
-handler.commands // An array with bot commands
+handler.commands // An collection with bot commands
 [
   {
     name: "The name of the command (defined by the file name)",
