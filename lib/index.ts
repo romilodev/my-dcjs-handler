@@ -31,6 +31,10 @@ export interface HandlerOptions {
   commandsPath: string
 }
 
+interface RunOptions {
+  prefix?: string
+}
+
 export interface Command {
   name: string
   aliases?: string[]
@@ -42,15 +46,24 @@ export interface Command {
         required?: boolean
       }
   )[]
-  run(client: Client, message: Message, args: string[]): void
+  run(
+    client: Client,
+    message: Message,
+    args: string[],
+    options: RunOptions
+  ): void
 }
 
 interface Handler {
   commands: Collection<string, Command>
 }
 
+interface RunHandler extends Handler {
+  prefix: string
+}
+
 export interface CommandFileRun {
-  (client: Client, message: Message, args: string[], handler: Handler): any
+  (client: Client, message: Message, args: string[], handler: RunHandler): any
 }
 
 export interface CommandFile {
@@ -79,7 +92,7 @@ class Handler {
     this.init()
   }
 
-  public get prefix() {
+  public get defaultPrefix() {
     return this.options.prefix
   }
 
@@ -94,15 +107,13 @@ class Handler {
     return command
   }
 
-  public runCommand(client: Client, message: Message) {
+  public runCommand(client: Client, message: Message, options?: RunOptions) {
     const msg = message.content.toLowerCase()
+    const prefix = options?.prefix || this.options.prefix
 
-    if (msg.indexOf(this.options.prefix) !== 0) return
+    if (msg.indexOf(prefix) !== 0) return
 
-    const args = message.content
-      .slice(this.options.prefix.length)
-      .trim()
-      .split(/ +/g)
+    const args = message.content.slice(prefix.length).trim().split(/ +/g)
     const command = args.shift()?.toLowerCase()
 
     if (!command) return
@@ -117,7 +128,7 @@ class Handler {
       return
     }
 
-    commandInfo.run(client, message, args)
+    commandInfo.run(client, message, args, options || {})
   }
 
   private init() {
@@ -140,9 +151,14 @@ class Handler {
         description: commandFile.description,
         aliases: commandFile.aliases,
         args: commandFile.args,
-        run: (client, message, args) => {
+        run: (client, message, args, options) => {
           try {
-            commandFile.run(client, message, args, this)
+            const handler: RunHandler = {
+              ...this,
+              prefix: options.prefix || this.defaultPrefix
+            }
+
+            commandFile.run(client, message, args, handler)
           } catch (e) {
             console.warn(e)
 
